@@ -2194,7 +2194,7 @@ class RustPlus extends RustPlusLib {
         ]);
 
         let str = `${itemName}: `;
-        for (const item of recycleData) {
+        for (const item of recycleData['recycler']) {
             str += `${Client.client.items.getName(item.itemId)} x${item.quantity}, `;
         }
         str = str.slice(0, -2);
@@ -2280,7 +2280,7 @@ class RustPlus extends RustPlusLib {
                     });
                 }
 
-                const discordUserId = credentials[player.steamId].discordUserId;
+                const discordUserId = credentials[player.steamId].discord_user_id;
                 const user = await DiscordTools.getUserById(this.guildId, discordUserId);
 
                 const content = {

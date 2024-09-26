@@ -70,7 +70,7 @@ module.exports = {
         const server = instance.serverList[serverId];
         let hoster = Client.client.intlGet(guildId, 'unknown');
         if (credentials.hasOwnProperty(server.steamId)) {
-            hoster = await DiscordTools.getUserById(guildId, credentials[server.steamId].discordUserId);
+            hoster = await DiscordTools.getUserById(guildId, credentials[server.steamId].discord_user_id);
             hoster = hoster.user.username;
         }
 
@@ -434,7 +434,7 @@ module.exports = {
         const grid = entity.location !== null ? ` (${entity.location})` : '';
 
         let itemName = '', itemQuantity = '';
-        for (const item of items) {
+        for (const item of items['recycler']) {
             itemName += `\`${Client.client.items.getName(item.itemId)}\`\n`;
             itemQuantity += `\`${item.quantity}\`\n`;
         }
@@ -498,7 +498,7 @@ module.exports = {
         const server = instance.serverList[serverId];
         const entity = server.storageMonitors[entityId];
         const credentials = InstanceUtils.readCredentialsFile(guildId);
-        const user = await DiscordTools.getUserById(guildId, credentials[server.steamId].discordUserId);
+        const user = await DiscordTools.getUserById(guildId, credentials[server.steamId].discord_user_id);
         const grid = entity.location !== null ? ` (${entity.location})` : '';
 
         return module.exports.getEmbed({
@@ -519,7 +519,7 @@ module.exports = {
         const server = instance.serverList[serverId];
         const entity = instance.serverList[serverId].switches[entityId];
         const credentials = InstanceUtils.readCredentialsFile(guildId);
-        const user = await DiscordTools.getUserById(guildId, credentials[server.steamId].discordUserId);
+        const user = await DiscordTools.getUserById(guildId, credentials[server.steamId].discord_user_id);
         const grid = entity.location !== null ? ` (${entity.location})` : '';
 
         return module.exports.getEmbed({
@@ -540,7 +540,7 @@ module.exports = {
         const server = instance.serverList[serverId];
         const entity = server.alarms[entityId];
         const credentials = InstanceUtils.readCredentialsFile(guildId);
-        const user = await DiscordTools.getUserById(guildId, credentials[server.steamId].discordUserId);
+        const user = await DiscordTools.getUserById(guildId, credentials[server.steamId].discord_user_id);
         const grid = entity.location !== null ? ` (${entity.location})` : '';
 
         return module.exports.getEmbed({
@@ -991,7 +991,7 @@ module.exports = {
         for (const credential in credentials) {
             if (credential === 'hoster') continue;
 
-            const user = await DiscordTools.getUserById(guildId, credentials[credential].discordUserId);
+            const user = await DiscordTools.getUserById(guildId, credentials[credential].discord_user_id);
             names += `${user.user.username}\n`;
             steamIds += `${credential}\n`;
             hoster += `${credential === credentials.hoster ? `${Constants.LEADER_EMOJI}\n` : '\u200B\n'}`;
@@ -1141,21 +1141,22 @@ module.exports = {
         });
     },
 
-    getRecycleEmbed: function (guildId, recycleDetails, quantity) {
-        const title = quantity === 1 ? `${recycleDetails[1].name}` : `${recycleDetails[1].name} x${quantity}`;
+    getRecycleEmbed: function (guildId, recycleDetails, quantity, recyclerType) {
+        let title = quantity === 1 ? `${recycleDetails[1].name}` : `${recycleDetails[1].name} x${quantity}`;
+        title += ` (${Client.client.intlGet(guildId, recyclerType)})`;
 
         const recycleData = Client.client.rustlabs.getRecycleDataFromArray([
             { itemId: recycleDetails[0], quantity: quantity, itemIsBlueprint: false }
         ]);
 
         let items0 = '', quantities0 = '';
-        for (const item of recycleDetails[2]) {
+        for (const item of recycleDetails[2][recyclerType]['yield']) {
             items0 += `${Client.client.items.getName(item.id)}\n`;
             quantities0 += (item.probability !== 1) ? `${parseInt(item.probability * 100)}%\n` : `${item.quantity}\n`;
         }
 
         let items1 = '', quantities1 = '';
-        for (const item of recycleData) {
+        for (const item of recycleData[recyclerType]) {
             items1 += `${Client.client.items.getName(item.itemId)}\n`;
             quantities1 += `${item.quantity}\n`;
         }
@@ -1335,7 +1336,7 @@ module.exports = {
 
         const recycleDetails = type === 'items' ? Client.client.rustlabs.getRecycleDetailsById(itemId) : null;
         if (recycleDetails !== null) {
-            const details = recycleDetails[2];
+            const details = recycleDetails[2]['recycler']['yield'];
 
             let recycleString = '';
             for (const recycleItem of details) {
