@@ -727,6 +727,7 @@
     "trackerRemovePlayerDesc": "从 {tracker} 移除玩家",
     "trademarkShownBeforeMessage": "每条游戏内消息前将显示 {trademark}。",
     "trainYard": "火车站",
+    "travelingVendor": "旅行中的商贩",
     "travelingVendorDetectedSetting": "当发现旅行商贩时，发送通知。",
     "travelingVendorLeftSetting": "当旅行商贩离开地图时，发送通知。",
     "travelingVendorLocatedAt": "旅行商贩位于 {location}。",
