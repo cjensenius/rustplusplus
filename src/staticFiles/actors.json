@@ -42,5 +42,9 @@
     "tr":{
         "male": "Mehmet",
         "female": "Miray"
+    },
+    "zh":{
+        "male": "cmn-CN-Wavenet-B",
+        "female": "Zhiyu"
     }
 }
